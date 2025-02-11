@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+  <head>
+    <!-- Meta Tags -->
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="easyrojmel" />
+    <title>પરિશિષ્ટ - ૧૦</title>
+    <link
+      rel="stylesheet"
+      href="../public/css/style.css"
+    />
+    <style>
+      .cs-heading.cs-style1 {
+          text-align: center;
+      }
+      .cs-box.cs-style2.cs-detail-box2 {
+        padding: 10px 15px;
+      }
+      @media print {
+        .cs-ml15.cs-signature {
+          margin-top: 110px;
+          text-align: end;
+        }
+        .signature-img {
+          margin-top: 105px;
+          width: 155.956px;
+          border-bottom: 1px solid #000;
+          float: right;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="cs-container">
+      <div class="cs-report cs-style1">
+        <div class="cs-report_in" id="download_section">
+          <div class="cs-text_center cs-mb25">
+            <p class="cs-f28 cs-m0 cs-bold cs-dip_blue_color text-transform-uppercase">
+              પરિશિષ્ટ - ૧૦
+            </p>
+            <p class="cs-m0 cs-f15 cs-secondary_color">
+              <%= reportData?.userDetails?.rojmel_name %> (<%= reportData?.userDetails?.bank_account_no %> - <%= reportData?.userDetails?.bank_name %>)
+            </p>
+          </div>
+          <div class="cs-heading cs-style1 cs-f18 cs-primary_color cs-mb25 cs-semi_bold">ગ્રાન્ટ વપરાશનું પ્રમાણપત્ર વર્ષ: <%= reportData?.financialYear?.financial_tag %></div>
+          <ul class="cs-list cs-style2 cs-focus_bg">
+            <li>
+              <div class="cs-list_left">એસ.એમ.સી.: <b class="cs-primary_color cs-semi_bold "><%= reportData?.userDetails?.school_name %></b></div>
+              <div class="cs-list_right">ક્લસ્ટર: <b class="cs-primary_color cs-semi_bold "><%= reportData?.userDetails?.cluster_name %></b></div>
+            </li>
+            <li>
+              <div class="cs-list_left">શાળાનો ડાયસ કોડ: <b class="cs-primary_color cs-semi_bold "><%= reportData?.userDetails?.school_dice_code %></b></div>
+              <div class="cs-list_right">જીલ્લો: <b class="cs-primary_color cs-semi_bold "><%= reportData?.userDetails?.sub_division %></b></div>
+            </li>
+            <li>
+              <div class="cs-list_left">તાલુકો: <b class="cs-primary_color cs-semi_bold "><%= reportData?.userDetails?.district %></b></div>
+              <div class="cs-list_right">વર્ષ: <b class="cs-primary_color cs-semi_bold "><%= reportData?.financialYear?.financial_tag %></b></div>
+            </li>
+          </ul>
+          <div class="cs-box3_wrap cs-mb30">
+            <div class="cs-box cs-style2 cs-detail-box2">
+              <span>આથી પ્રમાણપત્ર આપવામાં આવે છે કે <b class="cs-semi_bold cs-primary_color"><%= reportData?.financialYear?.financial_tag %></b> નાણાકીય વર્ષ દરમ્યાન ગત વર્ષની સિલક અને નવી મળેલ સિલક કુલ ગ્રાન્ટ અંકે <b class="cs-semi_bold cs-primary_color"><%= reportData?.generalTotals?.totalGrant %></b> રૂપિયા છે. જે પૈકી જમા કુલ ગ્રાન્ટ માંથી વપરાયેલ  કુલ ગ્રાન્ટ અંકે <b class="cs-semi_bold cs-primary_color"><%= reportData?.generalTotals?.usedGrant %></b> રૂપિયા છે. આ 
+                વર્ષ દરમિયાન વપરાયેલ  કુલ ગ્રાન્ટ માંથી બચેલી કુલ ગ્રાન્ટ અંકે <b class="cs-semi_bold cs-primary_color"><%= reportData?.generalTotals?.remainingGrant %></b> રૂપિયા છે. આ ઉપરાતાં આવક અને ખર્ચના આંકડા સબંધિત હિસાબી રેકોર્ડ સાથે ચકાસણી કરીને નીચે દર્શાવેલ છે.</span>
+            </div>  
+          </div>
+          <div class="cs-table cs-style2">
+            <div>
+              <div class="cs-table_responsive">
+                <table>
+                  <thead>
+                    <tr class="cs-focus_bg">
+                      <th class="cs-width_0_25 cs-semi_bold cs-primary_color cs-text_center">
+                        ક્રમ
+                      </th>
+                      <th class="cs-width_2 cs-semi_bold cs-primary_color cs-text_center">
+                        ગ્રાન્ટનું નામ
+                      </th>
+                      <th class="cs-width_1 cs-semi_bold cs-primary_color cs-text_center">
+                        ઉઘડતી સિલક
+                      </th>
+                      <th class="cs-width_1 cs-semi_bold cs-primary_color cs-text_center">
+                        મળેલ ગ્રાન્ટની રકમ
+                      </th>
+                      <th class="cs-width_1 cs-semi_bold cs-primary_color cs-text_center">
+                        કુલ ગ્રાન્ટની રકમ
+                      </th>
+                      <th class="cs-width_1 cs-semi_bold cs-primary_color cs-text_center">
+                        કુલ ખર્ચેલ રકમ
+                      </th>
+                      <th class="cs-width_1 cs-semi_bold cs-primary_color cs-text_center">
+                        બંધ સિલક
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <% if (reportData?.appendix10Data && reportData?.appendix10Data.length > 0) { %>
+                      <% reportData?.appendix10Data.forEach(function(data) { %>
+                        <tr>
+                          <td class="cs-text_center"><%= data.no %></td>
+                          <td class="cs-text_center"><%= data.head_name %></td>
+                          <td class="cs-text_center"><%= data.opening_balance.toFixed(2) %></td>
+                          <td class="cs-text_center"><%= data.in_total.toFixed(2) %></td>
+                          <td class="cs-text_center"><%= data.total_head_wise.toFixed(2) %></td>
+                          <td class="cs-text_center"><%= data.total_head_wise_deposit.toFixed(2) %></td>
+                          <td class="cs-text_center"><%= data.final_amount.toFixed(2) %></td>
+                        </tr>
+                      <% }); %>
+                      <tr class="cs-focus_bg">
+                        <td colspan="2" class="cs-text_center cs-semi_bold cs-primary_color">કુલ</td>
+                        <td class="cs-semi_bold cs-primary_color cs-text_center">
+                          <%= reportData?.appendix10Data.reduce((sum, data) => sum + data.opening_balance, 0).toFixed(2) %>
+                        </td>
+                        <td class="cs-semi_bold cs-primary_color cs-text_center">
+                          <%= reportData?.appendix10Data.reduce((sum, data) => sum + data.in_total, 0).toFixed(2) %>
+                        </td>
+                        <td class="cs-semi_bold cs-primary_color cs-text_center">
+                          <%= reportData?.appendix10Data.reduce((sum, data) => sum + data.total_head_wise, 0).toFixed(2) %>
+                        </td>
+                        <td class="cs-semi_bold cs-primary_color cs-text_center">
+                          <%= reportData?.appendix10Data.reduce((sum, data) => sum + data.total_head_wise_deposit, 0).toFixed(2) %>
+                        </td>
+                        <td class="cs-semi_bold cs-primary_color cs-text_center">
+                          <%= reportData?.appendix10Data.reduce((sum, data) => sum + data.final_amount, 0).toFixed(2) %>
+                        </td>
+                      </tr>
+                    <% } else { %>
+                      <tr>
+                        <td colspan="7" class="cs-text_center">No Data Available</td>
+                      </tr>
+                    <% } %>
+                  </tbody>                  
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="signature-img"></div>
+        <div class="cs-ml15 cs-signature">
+          <p>આચાર્યશ્રી ની સહી અને સિકકો</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

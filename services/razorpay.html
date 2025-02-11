@@ -1,0 +1,37 @@
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  async function payNow() {
+    const response = await fetch("http://13.126.40.50:5000/api/v1/subscriptions/create-order", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3OTYxNGI1OTE2NDQ2YzNjODg1MjQwMCIsImN1cnJlbnRfc3Vic2NyaXB0aW9uX2lkIjoiNjc5NjE0YjU5MTY0NDZjM2M4ODUyM2ZlIiwiaWF0IjoxNzM4NjgzMDQyLCJleHAiOjE3Mzg2ODY2NDJ9.80-ZWebvOFeNWkVNu001A1xgHBBWhFtBOFj4mc6QB48" },
+      body: JSON.stringify({
+        subscriptionId: "679614b5916446c3c88523fe"
+      })
+    });
+
+    const data = await response.json();
+    console.log(data)
+    const options = {
+      key: "rzp_test_GLComtpgG1StCu",
+      amount: data.data.amount,
+      currency: "INR",
+      order_id: data.data.orderId,
+      name: "Your Business",
+      description: "Test Transaction",
+      image: "https://your-logo-url.com/logo.png",
+      handler: function (response) {
+        console.log("Payment Successful:", response);
+        alert("Payment Successful! Transaction ID: " + response.razorpay_payment_id);
+      },
+      notes: {
+        user_id: "Mohit"
+      },
+      theme: { color: "#3399cc" }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+  }
+</script>
+
+<button onclick="payNow()">Pay Now</button>

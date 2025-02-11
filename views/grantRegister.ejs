@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ગ્રાન્ટ રજિસ્ટર</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        /* font-family: sans-serif; */
+        background-color: #f5f7ff; /* Light blue background */
+        color: #777777;
+        font-family: "Inter", sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+      }
+
+      .gujarati-font {
+        font-family: "Gujarati Font Name", serif;
+      }
+
+      .container {
+        padding: 30px 30px;
+      }
+
+      .main-container {
+        background-color: #fff;
+        padding: 35px;
+        border-radius: 5px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        /* margin-top: 20px; */
+        margin-top: 0px;
+      }
+
+      .section-header {
+        text-align: center;
+        color: #111111;
+        margin-bottom: 25px;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 1.5em;
+        border-top: 1px solid #eaeaea;
+        border-bottom: 1px solid #eaeaea;
+        padding: 10px 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+        /* border-radius: 5px; Add border-radius for rounded corners */
+        border: 1px solid #eaeaea;
+        border-radius: 6px;
+        /* overflow: hidden; */
+        text-align: center;
+      }
+
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 5px;
+        text-align: center; /* Ensure center alignment */
+        vertical-align: middle; /* Align text vertically in the center */
+      }
+
+      th {
+        background-color: #e6e6e6;
+        font-weight: bold;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9; /* Light gray row shading */
+      }
+
+      .merged-cell {
+        background-color: #f0f0f0; /* Light gray for merged cells */
+        font-weight: bold;
+        /* padding: 15px; */
+      }
+
+      th.merged-table-th,
+      td.merged-table-td {
+        padding: 5px;
+        color: #777777;
+      }
+
+      .info-section {
+        display: flex;
+      }
+
+      .info-item {
+        flex: 1;
+        padding: 5px 25px;
+      }
+      .cs-f28 {
+        font-size: 28px;
+      }
+
+      .cs-m0 {
+        margin: 0px !important;
+      }
+
+      .cs-dip_blue_color {
+        color: #2525cf;
+      }
+
+      .cs-bold {
+        font-weight: 700;
+      }
+
+      .secondary-text {
+        font-size: 15px;
+        color: #777777;
+        margin: 0px !important;
+        line-height: 1.5em;
+      }
+      .text-header {
+        text-align: center;
+        margin-bottom: 25px;
+      }
+      .details-list {
+        list-style: none;
+        margin: 0 0 30px 0;
+        padding: 12px 0;
+        border: 1px solid #eaeaea;
+        border-radius: 5px;
+        background: #f6f6f6;
+      }
+
+      .cs-primary_color {
+        color: #111111;
+      }
+      th.cs-primary_color {
+        color: #111111;
+      }
+      td.cs-primary_color {
+        color: #111111;
+      }
+      .cs-semi_bold {
+        font-weight: 600;
+      }
+      th.cs-semi_bold {
+        font-weight: 600;
+      }
+      td.cs-semi_bold {
+        font-weight: 600;
+      }
+
+      th.tr-thead-credit {
+        background-color: #c7f8bb;
+      }
+      th.tr-thead-debit {
+        background-color: #f8a1a1;
+      }
+      th.tr-credit,
+      td.tr-credit {
+        background-color: #e3f3df;
+      }
+      th.tr-debit,
+      td.tr-debit {
+        background-color: #f2cdcd;
+      }
+
+      th.tr-bg-gray,
+      td.tr-bg-gray {
+        background-color: #f6f6f6;
+      }
+
+      table th,
+      table td {
+        border: 1px solid #eaeaea;
+        border-collapse: collapse;
+        text-align: center; /* Ensure center alignment */
+        vertical-align: middle; /* Align text vertically in the center */
+      }
+      .container {
+        max-width: 100% !important;
+        width: 100%;
+      }
+
+      .rotate-text {
+        writing-mode: vertical-rl;
+        transform: rotate(180deg);
+        white-space: nowrap;
+      }
+
+      table.table {
+        font-size: 9px;
+      }
+
+      @media print {
+        @page {
+          size: A4 landscape;
+          margin: 0; /* Remove margins */
+        }
+
+        body {
+          background-color: #fff !important;
+        }
+
+        .main-container {
+          width: 100%;
+          padding: 20px; /* Adjust padding */
+        }
+
+        table {
+          width: 100%;
+        }
+        table.table {
+          font-size: 9px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- <div class="container"> -->
+      <div class="main-container">
+        <div class="text-header">
+          <h1
+            class="text-center gujarati-font cs-f28 cs-m0 cs-bold cs-dip_blue_color text-transform-uppercase"
+          >
+            ગ્રાન્ટ રજિસ્ટર
+          </h1>
+          <p class="text-center secondary-text">
+            <%= reportData?.userDetails?.rojmel_name %> (<%=
+            reportData?.userDetails?.bank_account_no %> - <%=
+            reportData?.userDetails?.bank_name %>)
+          </p>
+        </div>
+        <div class="text-sub-header">
+          <h2 class="gujarati-font section-header">
+            ગ્રાન્ટ રજિસ્ટર પત્રક (પરિશિષ્ટ- ૧૧) વર્ષ : <%=
+            reportData?.financialYear?.financial_tag %>
+          </h2>
+        </div>
+        <ul class="details-list">
+          <li class="info-section">
+            <div class="info-item">
+              <span>એસ.એમ.સી.:</span>
+              <b class="cs-semi_bold cs-primary_color"
+                ><%= reportData?.userDetails?.school_name %></b
+              >
+            </div>
+            <div class="info-item">
+              <span>ક્લસ્ટર:</span>
+              <b class="cs-semi_bold cs-primary_color"
+                ><%= reportData?.userDetails?.cluster_name %></b
+              >
+            </div>
+            <div class="info-item">
+              <span>શાળાનો ડાયસ કોડ:</span>
+              <b class="cs-semi_bold cs-primary_color"
+                ><%= reportData?.userDetails?.school_dice_code %></b
+              >
+            </div>
+          </li>
+          <li class="info-section">
+            <div class="info-item">
+              <span>જીલ્લો:</span>
+              <b class="cs-semi_bold cs-primary_color"
+                ><%= reportData?.userDetails?.sub_division %></b
+              >
+            </div>
+            <div class="info-item">
+              <span>તાલુકો:</span>
+              <b class="cs-semi_bold cs-primary_color"
+                ><%= reportData?.userDetails?.district %></b
+              >
+            </div>
+            <div class="info-item">
+              <span>વર્ષ:</span>
+              <b class="cs-semi_bold cs-primary_color"
+                ><%= reportData?.financialYear?.financial_tag %></b
+              >
+            </div>
+          </li>
+        </ul>
+        <div class="row">
+          <div class="col-md-12">
+            <table class="table">
+              <tr>
+                <th
+                  rowspan="2"
+                  class="cs-semi_bold cs-primary_color merged-cell merged-table-th tr-bg-gray"
+                  style="width: 1%"
+                >
+                  ક્રમ
+                </th>
+                <th
+                  colspan="6"
+                  class="cs-semi_bold cs-primary_color merged-cell merged-table-th tr-bg-gray"
+                  style="width: 35%"
+                >
+                  ગ્રાન્ટ જમા
+                </th>
+                <th
+                  rowspan="2"
+                  class="cs-semi_bold cs-primary_color merged-cell merged-table-th tr-bg-gray"
+                  style="width: 3%"
+                >
+                  ગ્રાન્ટ ફાળવણી આદેશ નંબર/તારીખ
+                </th>
+                <th
+                  rowspan="2"
+                  class="cs-semi_bold cs-primary_color merged-cell merged-table-th tr-bg-gray"
+                  style="width: 3%"
+                >
+                  ડી.ડી/ચેક નં./તારીખ
+                </th>
+                <th
+                  colspan="3"
+                  class="cs-semi_bold cs-primary_color merged-cell merged-table-th tr-bg-gray"
+                  style="width: 30%"
+                >
+                  બેંક માં જમા કર્યાની વિગત
+                </th>
+                <th
+                  rowspan="2"
+                  class="cs-semi_bold cs-primary_color merged-cell merged-table-th tr-bg-gray"
+                  style="width: 15%"
+                >
+                  કોને ફાળવેલ
+                </th>
+                <th
+                  rowspan="2"
+                  class="cs-semi_bold cs-primary_color merged-cell merged-table-th tr-bg-gray"
+                  style="width: 6%"
+                >
+                  કરેલ ખર્ચ
+                </th>
+                <th
+                  rowspan="2"
+                  class="cs-semi_bold cs-primary_color merged-cell merged-table-th tr-bg-gray"
+                  style="width: 6%"
+                >
+                  બચત ગ્રાન્ટ
+                </th>
+                <th
+                  rowspan="2"
+                  class="cs-semi_bold cs-primary_color merged-cell merged-table-th tr-bg-gray rotate-text"
+                  style="width: 1%"
+                >
+                  રિમાર્કસ
+                </th>
+              </tr>
+              <tr>
+                <th
+                  class="cs-semi_bold cs-primary_color merged-table-th tr-bg-gray"
+                  style="width: 3%"
+                >
+                  કોના તરફથી મળી
+                </th>
+                <th
+                  class="cs-semi_bold cs-primary_color merged-table-th tr-bg-gray"
+                  style="width: 2%"
+                >
+                  તારીખ અને ડી.ડી. નંબર
+                </th>
+                <th
+                  class="cs-semi_bold cs-primary_color merged-table-th tr-bg-gray"
+                  style="width: 5%"
+                >
+                  ગત વર્ષની ગ્રાન્ટ
+                </th>
+                <th
+                  class="cs-semi_bold cs-primary_color merged-table-th tr-bg-gray"
+                  style="width: 5%"
+                >
+                  ચાલુ વર્ષની ગ્રાન્ટ
+                </th>
+                <th
+                  class="cs-semi_bold cs-primary_color merged-table-th tr-bg-gray"
+                  style="width: 5%"
+                >
+                  કુલ ગ્રાન્ટ
+                </th>
+                <th
+                  class="cs-semi_bold cs-primary_color merged-table-th tr-bg-gray"
+                  style="width: 14%"
+                >
+                  કયા કામે મળી
+                </th>
+                <th
+                  class="cs-semi_bold cs-primary_color merged-table-th tr-bg-gray"
+                  style="width: 14%"
+                >
+                  બેન્કનુ નામ
+                </th>
+                <th
+                  class="cs-semi_bold cs-primary_color merged-table-th tr-bg-gray"
+                  style="width: 3%"
+                >
+                  જમા કરાવ્યાની તારીખ
+                </th>
+                <th
+                  class="cs-semi_bold cs-primary_color merged-table-th tr-bg-gray"
+                  style="width: 3%"
+                >
+                  જમા થયાની તારીખ
+                </th>
+              </tr>
+              <%
+              reportData?.grantRegisterData?.forEach((data,
+              index) => { %> 
+                <tr>
+                    <td class="merged-table-td"><%= index + 1 %></td>
+                    <td class="merged-table-td"></td>
+                    <td class="merged-table-td"></td>
+                    <td class="merged-table-td"><%= data.opening_balance %></td>
+                    <td class="merged-table-td"><%= data.in_total %></td>
+                    <td class="merged-table-td"><%= data.total_head_wise %></td>
+                    <td class="merged-table-td"><%= data.head_name %></td>
+                    <td class="merged-table-td"></td>
+                    <td class="merged-table-td"></td>
+                    <td class="merged-table-td"><%= reportData?.userDetails?.rojmel_name %> (<%= reportData?.userDetails?.bank_account_no %> - <%= reportData?.userDetails?.bank_name %>)</td>
+                    <td class="merged-table-td"></td>
+                    <td class="merged-table-td"></td>
+                    <td class="merged-table-td"><%= reportData?.userDetails?.school_name %></td>
+                    <td class="merged-table-td"><%= data.total_head_wise_deposit %></td>
+                    <td class="merged-table-td"><%= data.final_amount %></td>
+                    <td class="merged-table-td"></td>
+                  </tr>
+              <% }); %>
+            </table>
+          </div>
+        </div>
+      </div>
+    <!-- </div> -->
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
