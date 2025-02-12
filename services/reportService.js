@@ -99,10 +99,15 @@ exports.generateReport = async (user, reportType, headId) => {
     // Launch Puppeteer and generate PDF
     // const browser = await puppeteer.launch(); // For Testing or Development purpose
     const browser = await puppeteer.launch({
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      headless: true, // Run in headless mode,
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-gpu',
+        '--disable-dev-shm-usage'
+      ],
+      headless: "new", // Run in headless mode,
       executablePath: process.env.NODE_ENV === 'production'
-        ? '/usr/bin/google-chrome-stable'
+        ? '/usr/bin/chromium'
         : puppeteer.executablePath()
     });
 
