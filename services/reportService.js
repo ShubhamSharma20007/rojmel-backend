@@ -23,7 +23,7 @@ exports.generateReport = async (user, reportType, headId) => {
     const userDetails = await User.findById(user_id).select('school_name school_dice_code rojmel_name cluster_name bank_name bank_account_no sub_division district');
     reportData.userDetails = userDetails;
 
-    if(financial_year_id) {
+    if (financial_year_id) {
       const financialYear = await FinancialYear.findById(financial_year_id).select('fy_start_date fy_end_date');
       if (financialYear) {
         const startYear = new Date(financialYear.fy_start_date).getFullYear();
@@ -36,7 +36,7 @@ exports.generateReport = async (user, reportType, headId) => {
     // If reportType is 'khatavahi', fetch the head details
     if (reportType === 'khatavahi' && headId) {
       try {
-        const head = await Head.findById({ _id : new ObjectId(headId) }).select('head_name opening_balance_cash opening_balance_bank');
+        const head = await Head.findById({ _id: new ObjectId(headId) }).select('head_name opening_balance_cash opening_balance_bank');
         if (!head) throw { status: 404, message: 'વિનંતી કરાયેલ હેડ મળ્યું નથી' };
         reportData.head = head;
       } catch (error) {
@@ -67,7 +67,7 @@ exports.generateReport = async (user, reportType, headId) => {
         const result = await generateAppendix10Report(user_id, financial_year_id);
         reportData.appendix10Data = result.appendix10Data;
         reportData.generalTotals = result.generalTotals;
-        if(reportData.appendix10Data.length === 0) throw { status: 404, message: 'કોઈ રોજમેળ ની એન્ટ્રી ઉપલબ્ધ નથી' };
+        if (reportData.appendix10Data.length === 0) throw { status: 404, message: 'કોઈ રોજમેળ ની એન્ટ્રી ઉપલબ્ધ નથી' };
         templatePath = path.resolve(__dirname, '../views', 'appendix10.ejs');
         break;
       case 'khatavahi':
@@ -100,17 +100,20 @@ exports.generateReport = async (user, reportType, headId) => {
     // const browser = await puppeteer.launch(); // For Testing or Development purpose
     const browser = await puppeteer.launch({
       args: ['--no-sandbox', '--disable-setuid-sandbox'],
-      headless: true // Run in headless mode
+      headless: true, // Run in headless mode,
+      executablePath: process.env.NODE_ENV === 'production'
+        ? '/usr/bin/google-chrome-stable'
+        : puppeteer.executablePath()
     });
 
     // Render the EJS template to HTML
-    if(reportType === 'cashbook') {
+    if (reportType === 'cashbook') {
       const cashbookTemplatePath = path.resolve(__dirname, '../views', 'cashbook.ejs');
       const cashbookHtml = await ejs.renderFile(cashbookTemplatePath, { reportData });
       const creditHtml = await ejs.renderFile(creditTemplatePath, { reportData });
       const depositHtml = await ejs.renderFile(depositTemplatePath, { reportData });
 
-       // Generate PDFs
+      // Generate PDFs
       const cashbookPdfBuffer = await generatePdfBuffer(browser, cashbookHtml, reportData); // Always single page
       const creditPdfBuffer = await generatePdfBuffer(browser, creditHtml, reportData);
       const depositPdfBuffer = await generatePdfBuffer(browser, depositHtml, reportData);
@@ -146,11 +149,11 @@ exports.generateReport = async (user, reportType, headId) => {
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir);
     }
-  
+
     // Save the PDF to a file
     const pdfPath = path.join(tempDir, `${Date.now()}_${reportType}.pdf`);
     fs.writeFileSync(pdfPath, updatedPdfBuffer);
-  
+
     return pdfPath;
   } catch (error) {
     throw { status: error.status || 500, message: error.message || 'PDF બનાવવામાં અસમર્થ' };
@@ -163,9 +166,9 @@ async function generatePdfBuffer(browser, htmlContent, reportData) {
   await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
   await page.addStyleTag({ path: reportData.cssPath });
   const pdfBuffer = await page.pdf({
-      format: 'A4',
-      landscape: false,
-      printBackground: true,
+    format: 'A4',
+    landscape: false,
+    printBackground: true,
   });
   await page.close();
   return pdfBuffer;
@@ -189,14 +192,14 @@ async function mergePdfsNotebookStyle(cashbookPdfBuffer, creditPdfBuffer, deposi
   const maxPages = Math.max(creditPages, depositPages);
 
   for (let i = 0; i < maxPages; i++) {
-      if (i < creditPages) {
-          const [creditPage] = await mergedPdf.copyPages(creditPdf, [i]);
-          mergedPdf.addPage(creditPage);
-      }
-      if (i < depositPages) {
-          const [depositPage] = await mergedPdf.copyPages(depositPdf, [i]);
-          mergedPdf.addPage(depositPage);
-      }
+    if (i < creditPages) {
+      const [creditPage] = await mergedPdf.copyPages(creditPdf, [i]);
+      mergedPdf.addPage(creditPage);
+    }
+    if (i < depositPages) {
+      const [depositPage] = await mergedPdf.copyPages(depositPdf, [i]);
+      mergedPdf.addPage(depositPage);
+    }
   }
 
   return await mergedPdf.save();
@@ -241,7 +244,7 @@ const addPageNumbers = async (pdfBuffer) => {
   return await pdfDoc.save();
 };
 
-const generateAppendix9Report = async(userId, financialYearId) => {
+const generateAppendix9Report = async (userId, financialYearId) => {
   try {
     // Step 1: Fetch all heads for the user in the selected financial year
     const heads = await Head.find({ user_id: userId, financial_year_id: financialYearId });
@@ -287,9 +290,9 @@ const generateAppendix9Report = async(userId, financialYearId) => {
       totalCashAmount += totalCash;
       totalBankAmount += totalBank;
     }
-    
+
     totalAmount = totalCashAmount + totalBankAmount;
-    
+
     return appendix9Data = {
       totalCashAmount: totalCashAmount.toFixed(2),
       totalBankAmount: totalBankAmount.toFixed(2),
@@ -301,7 +304,7 @@ const generateAppendix9Report = async(userId, financialYearId) => {
   }
 }
 
-const generateAppendix10Report = async(userId, financialYearId) => {
+const generateAppendix10Report = async (userId, financialYearId) => {
   try {
     // Step 1: Fetch all heads for the user in the selected financial year
     const heads = await Head.find({ user_id: userId, financial_year_id: financialYearId });
@@ -381,7 +384,7 @@ const generateAppendix10Report = async(userId, financialYearId) => {
   }
 }
 
-const generateChequeRegisterReport = async(userId, financialYearId) => {
+const generateChequeRegisterReport = async (userId, financialYearId) => {
   try {
     let index = 1; // Initialize the index for numbering
 
@@ -393,7 +396,7 @@ const generateChequeRegisterReport = async(userId, financialYearId) => {
       payment_method: 'cheque'
     }).sort({ transaction_date: 1 }).populate('head_id', 'head_name');
 
-    if(transactions.length === 0) throw new Error("કોઈ ચેક રજીસ્ટર ની એન્ટ્રી ઉપલબ્ધ નથી");
+    if (transactions.length === 0) throw new Error("કોઈ ચેક રજીસ્ટર ની એન્ટ્રી ઉપલબ્ધ નથી");
 
     // Prepare the cheque register data
     const chequeRegisterData = transactions.map(transaction => {
@@ -415,7 +418,7 @@ const generateChequeRegisterReport = async(userId, financialYearId) => {
   }
 }
 
-const generateBillRegisterReport = async(userId, financialYearId) => {
+const generateBillRegisterReport = async (userId, financialYearId) => {
   try {
     let index = 1; // Initialize the index for numbering
 
@@ -430,7 +433,7 @@ const generateBillRegisterReport = async(userId, financialYearId) => {
       transaction_type: 'OUT',
     }).sort({ transaction_date: 1 }).populate('head_id', 'head_name');
 
-    if(transactions.length === 0) throw new Error("કોઈ બિલ રજીસ્ટર ની એન્ટ્રી ઉપલબ્ધ નથી");
+    if (transactions.length === 0) throw new Error("કોઈ બિલ રજીસ્ટર ની એન્ટ્રી ઉપલબ્ધ નથી");
 
     // Prepare the cheque register data
     const billRegisterData = transactions.map(transaction => {
@@ -461,7 +464,7 @@ const generateBillRegisterReport = async(userId, financialYearId) => {
   }
 }
 
-const generateGrantRegisterReport = async(userId, financialYearId) => {
+const generateGrantRegisterReport = async (userId, financialYearId) => {
   try {
     // Step 1: Fetch all heads for the user in the selected financial year
     const heads = await Head.find({ user_id: userId, financial_year_id: financialYearId });
@@ -576,11 +579,11 @@ function getUniqueDates(creditTransactions, debitTransactions) {
   const allDates = new Set();
 
   creditTransactions.forEach(transaction => {
-      allDates.add(new Date(transaction.transaction_date).toLocaleDateString());
+    allDates.add(new Date(transaction.transaction_date).toLocaleDateString());
   });
 
   debitTransactions.forEach(transaction => {
-      allDates.add(new Date(transaction.transaction_date).toLocaleDateString());
+    allDates.add(new Date(transaction.transaction_date).toLocaleDateString());
   });
 
   const sortedDates = Array.from(allDates).sort((a, b) => {
@@ -600,133 +603,133 @@ function combineCreditAndDebitByDate(creditTransactions, debitTransactions, cash
   let currentBankBalance = bankOpeningBalance;
 
   allDates.forEach(date => {
-      const combinedEntry = {
-          credit: [],
-          debit: []
-      };
+    const combinedEntry = {
+      credit: [],
+      debit: []
+    };
 
-      // Filter and add credit transactions:
-      const creditsForDate = creditTransactions.filter(credit => new Date(credit.transaction_date).toLocaleDateString() === date);
-      creditsForDate.forEach(credit => {
-          combinedEntry.credit.push({ // Push the entire credit object
-            head_name: credit.head_id.head_name,
-            cash_amount: credit.payment_method === 'cash' ? credit.amount.toFixed(2) : 0,
-            bank_amount: credit.payment_method !== 'cash' ? credit.amount.toFixed(2) : 0,
-            transaction_date: new Date(credit.transaction_date).toLocaleDateString(),
-            details: credit.details,
-            cheque_number: credit.cheque_number,
-            cheque_pfms_clearing_date: credit.cheque_pfms_clearing_date ? new Date(credit.cheque_pfms_clearing_date).toLocaleDateString() : null,
-            payment_method: credit.payment_method,
-            transaction_type: credit.transaction_type
-          });
+    // Filter and add credit transactions:
+    const creditsForDate = creditTransactions.filter(credit => new Date(credit.transaction_date).toLocaleDateString() === date);
+    creditsForDate.forEach(credit => {
+      combinedEntry.credit.push({ // Push the entire credit object
+        head_name: credit.head_id.head_name,
+        cash_amount: credit.payment_method === 'cash' ? credit.amount.toFixed(2) : 0,
+        bank_amount: credit.payment_method !== 'cash' ? credit.amount.toFixed(2) : 0,
+        transaction_date: new Date(credit.transaction_date).toLocaleDateString(),
+        details: credit.details,
+        cheque_number: credit.cheque_number,
+        cheque_pfms_clearing_date: credit.cheque_pfms_clearing_date ? new Date(credit.cheque_pfms_clearing_date).toLocaleDateString() : null,
+        payment_method: credit.payment_method,
+        transaction_type: credit.transaction_type
       });
+    });
 
-      // Filter and add debit transactions:
-      const debitsForDate = debitTransactions.filter(debit => new Date(debit.transaction_date).toLocaleDateString() === date);
-      debitsForDate.forEach(debit => {
-          combinedEntry.debit.push({ // Push the entire debit object
-            head_name: debit.head_id.head_name,
-            cash_amount: debit.payment_method === 'cash' ? debit.amount.toFixed(2) : 0,
-            bank_amount: debit.payment_method !== 'cash' ? debit.amount.toFixed(2) : 0,
-            transaction_date: new Date(debit.transaction_date).toLocaleDateString(),
-            details: debit.details,
-            cheque_number: debit.cheque_number,
-            cheque_pfms_clearing_date: debit.cheque_pfms_clearing_date ? new Date(debit.cheque_pfms_clearing_date).toLocaleDateString() : null,
-            payment_method: debit.payment_method,
-            transaction_type: debit.transaction_type
-          });
+    // Filter and add debit transactions:
+    const debitsForDate = debitTransactions.filter(debit => new Date(debit.transaction_date).toLocaleDateString() === date);
+    debitsForDate.forEach(debit => {
+      combinedEntry.debit.push({ // Push the entire debit object
+        head_name: debit.head_id.head_name,
+        cash_amount: debit.payment_method === 'cash' ? debit.amount.toFixed(2) : 0,
+        bank_amount: debit.payment_method !== 'cash' ? debit.amount.toFixed(2) : 0,
+        transaction_date: new Date(debit.transaction_date).toLocaleDateString(),
+        details: debit.details,
+        cheque_number: debit.cheque_number,
+        cheque_pfms_clearing_date: debit.cheque_pfms_clearing_date ? new Date(debit.cheque_pfms_clearing_date).toLocaleDateString() : null,
+        payment_method: debit.payment_method,
+        transaction_type: debit.transaction_type
       });
+    });
 
-      // Add blank entries to match the higher count:
-      const maxCount = Math.max(combinedEntry.credit.length, combinedEntry.debit.length);
-      for (let i = 0; i < maxCount; i++) {
-          if (!combinedEntry.credit[i]) { // If credit entry is missing, add a blank one
-              combinedEntry.credit[i] = {
-                head_name: null,
-                cash_amount: 0,
-                bank_amount: 0,
-                transaction_date: date,
-                details: null,
-                cheque_number: null,
-                cheque_pfms_clearing_date: null,
-                payment_method: null,
-                transaction_type: null
-              };
-          }
-          if (!combinedEntry.debit[i]) { // If debit entry is missing, add a blank one
-              combinedEntry.debit[i] = {
-                head_name: null,
-                cash_amount: 0,
-                bank_amount: 0,
-                transaction_date: date,
-                details: null,
-                cheque_number: null,
-                cheque_pfms_clearing_date: null,
-                payment_method: null,
-                transaction_type: null
-              };
-          }
+    // Add blank entries to match the higher count:
+    const maxCount = Math.max(combinedEntry.credit.length, combinedEntry.debit.length);
+    for (let i = 0; i < maxCount; i++) {
+      if (!combinedEntry.credit[i]) { // If credit entry is missing, add a blank one
+        combinedEntry.credit[i] = {
+          head_name: null,
+          cash_amount: 0,
+          bank_amount: 0,
+          transaction_date: date,
+          details: null,
+          cheque_number: null,
+          cheque_pfms_clearing_date: null,
+          payment_method: null,
+          transaction_type: null
+        };
       }
+      if (!combinedEntry.debit[i]) { // If debit entry is missing, add a blank one
+        combinedEntry.debit[i] = {
+          head_name: null,
+          cash_amount: 0,
+          bank_amount: 0,
+          transaction_date: date,
+          details: null,
+          cheque_number: null,
+          cheque_pfms_clearing_date: null,
+          payment_method: null,
+          transaction_type: null
+        };
+      }
+    }
 
-      // ... (Calculate totals and update balances - same as before)
-      let totalCashCreditAmount = 0;
-      let totalBankCreditAmount = 0;
-      combinedEntry.credit.forEach(credit => {
-          totalCashCreditAmount += parseFloat(credit.cash_amount) || 0; // Parse to float, handle NaN
-          totalBankCreditAmount += parseFloat(credit.bank_amount) || 0; // Parse to float, handle NaN
-      });
+    // ... (Calculate totals and update balances - same as before)
+    let totalCashCreditAmount = 0;
+    let totalBankCreditAmount = 0;
+    combinedEntry.credit.forEach(credit => {
+      totalCashCreditAmount += parseFloat(credit.cash_amount) || 0; // Parse to float, handle NaN
+      totalBankCreditAmount += parseFloat(credit.bank_amount) || 0; // Parse to float, handle NaN
+    });
 
-      let totalCashDebitAmount = 0;
-      let totalBankDebitAmount = 0;
-      combinedEntry.debit.forEach(debit => {
-          totalCashDebitAmount += parseFloat(debit.cash_amount) || 0; // Parse to float, handle NaN
-          totalBankDebitAmount += parseFloat(debit.bank_amount) || 0; // Parse to float, handle NaN
-      });
+    let totalCashDebitAmount = 0;
+    let totalBankDebitAmount = 0;
+    combinedEntry.debit.forEach(debit => {
+      totalCashDebitAmount += parseFloat(debit.cash_amount) || 0; // Parse to float, handle NaN
+      totalBankDebitAmount += parseFloat(debit.bank_amount) || 0; // Parse to float, handle NaN
+    });
 
-      // Update balances (same as before):
-      let openingCashAmount = currentCashBalance || 0;
-      let openingBankAmount = currentBankBalance || 0;
+    // Update balances (same as before):
+    let openingCashAmount = currentCashBalance || 0;
+    let openingBankAmount = currentBankBalance || 0;
 
-      let overallCashAmount = totalCashCreditAmount + openingCashAmount;
-      let overallBankAmount = totalBankCreditAmount + openingBankAmount;
+    let overallCashAmount = totalCashCreditAmount + openingCashAmount;
+    let overallBankAmount = totalBankCreditAmount + openingBankAmount;
 
-      currentCashBalance += totalCashCreditAmount - totalCashDebitAmount;
-      currentBankBalance += totalBankCreditAmount - totalBankDebitAmount;
+    currentCashBalance += totalCashCreditAmount - totalCashDebitAmount;
+    currentBankBalance += totalBankCreditAmount - totalBankDebitAmount;
 
-      const totalAmount = currentCashBalance + currentBankBalance
+    const totalAmount = currentCashBalance + currentBankBalance
 
-      // Combined Entry for amount
-      combinedEntry.totalCashCreditAmount = totalCashCreditAmount;
-      combinedEntry.totalBankCreditAmount = totalBankCreditAmount;
-      combinedEntry.totalCashDebitAmount = totalCashDebitAmount;
-      combinedEntry.totalBankDebitAmount = totalBankDebitAmount;
-      combinedEntry.totalAmount = totalAmount;
-      combinedEntry.totalClosingCashBalance = currentCashBalance;
-      combinedEntry.totalClosingBankBalance = currentBankBalance;
-      combinedEntry.openingCashAmount = openingCashAmount;
-      combinedEntry.openingBankAmount = openingBankAmount;
-      combinedEntry.overallCashAmount = overallCashAmount;
-      combinedEntry.overallBankAmount = overallBankAmount;
-      
-      combined.push(combinedEntry);
+    // Combined Entry for amount
+    combinedEntry.totalCashCreditAmount = totalCashCreditAmount;
+    combinedEntry.totalBankCreditAmount = totalBankCreditAmount;
+    combinedEntry.totalCashDebitAmount = totalCashDebitAmount;
+    combinedEntry.totalBankDebitAmount = totalBankDebitAmount;
+    combinedEntry.totalAmount = totalAmount;
+    combinedEntry.totalClosingCashBalance = currentCashBalance;
+    combinedEntry.totalClosingBankBalance = currentBankBalance;
+    combinedEntry.openingCashAmount = openingCashAmount;
+    combinedEntry.openingBankAmount = openingBankAmount;
+    combinedEntry.overallCashAmount = overallCashAmount;
+    combinedEntry.overallBankAmount = overallBankAmount;
+
+    combined.push(combinedEntry);
   });
 
   return combined;
 }
 
 
-const generateKhatavahiReport = async(userId, financialYearId, headId) => {
+const generateKhatavahiReport = async (userId, financialYearId, headId) => {
   try {
     // Step 1: Fetch all ledgers for specific head
     const ledgers = await Ledger.find({ user_id: userId, financial_year_id: financialYearId, head_id: new ObjectId(headId) }).sort({ transaction_date: 1 }).populate('head_id', 'head_name');
 
-    if(ledgers.length === 0) throw new Error("કોઈ ખાતાવહી ની એન્ટ્રી ઉપલબ્ધ નથી");
+    if (ledgers.length === 0) throw new Error("કોઈ ખાતાવહી ની એન્ટ્રી ઉપલબ્ધ નથી");
 
     // Step 2: I want to fetch the opening balance for all heads in the selected financial year and user id with separate variable for cash and bank
     const openingBalance = await getOpeningBalances(userId, financialYearId);
     const cashOpeningBalance = openingBalance.reduce((total, head) => total + parseFloat(head.opening_balance_cash), 0);
     const bankOpeningBalance = openingBalance.reduce((total, head) => total + parseFloat(head.opening_balance_bank), 0);
-    
+
     // Step 3: Fetch current financial year start date for opening balance
     const financialYear = await FinancialYear.findById(financialYearId);
     const financialYearStartDate = new Date(financialYear.fy_start_date).toLocaleDateString();
