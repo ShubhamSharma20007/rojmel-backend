@@ -106,9 +106,7 @@ exports.generateReport = async (user, reportType, headId) => {
         '--disable-dev-shm-usage'
       ],
       headless: "new", // Run in headless mode,
-      executablePath: process.env.NODE_ENV === 'production'
-        ? '/usr/bin/chromium'
-        : puppeteer.executablePath()
+      executablePath: "/usr/bin/chromium-browser"
     });
 
     // Render the EJS template to HTML
